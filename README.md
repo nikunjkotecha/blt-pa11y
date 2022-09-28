@@ -1,23 +1,38 @@
 Acquia BLT pa11y
 ====
 
-This is an [Acquia BLT](https://github.com/acquia/blt) plugin providing integration with the pa11y test framework.
+This is an [Acquia BLT](https://github.com/acquia/blt) plugin providing integration with the Pa11y test framework.
 
 This plugin provides a set of commands in the `tests` namespace that use these frameworks to run automated tests on your Drupal site.
 
-This plugin is **community-supported**. Acquia does not provide any direct support for this software or provide any warranty as to its stability.
+This plugin is **community-supported**.
 
-This plugin is provided solely as a backwards-compatible shim for customers upgrading from BLT 11. We recommend that anyone implementing new tests on a Drupal project use PHPUnit instead of Pa11y. PHPUnit now even supports Gherkin syntax if you prefer to preserve your human-readable Gherkin features: https://medium.com/@jonathanjfshaw/write-better-tests-by-using-pa11y-with-phpunit-ddb08d449b73
 
 # Installation and usage
 
-Note: To use this plugin, you must already have a Drupal project using BLT 12 or higher.
+To use this plugin, you must already have a Drupal project using BLT 13 or higher.
 
-## Add this plugin
+Add the following to the `repositories` section of your project's composer.json:
+
+```json lines
+"blt-pa11y": {
+    "type": "vcs",
+    "url": "https://github.com/nikunjkotecha/blt-pa11y.git",
+    "no-api": true
+}
+```
+
+or run:
+
+```bash
+composer config repositories.blt-pa11y '{"type": "vcs", "url": "https://github.com/nikunjkotecha/blt-pa11y.git", "no-api": true}'
+```
 
 In your project, require the plugin with Composer:
 
-`composer require acquia/blt-pa11y`
+```bash
+composer require --dev nikunjkotecha/blt-pa11y
+```
 
 ## Initialize Config 
 
@@ -41,8 +56,6 @@ Run the tests:
 ```
 
 # License
-
-Copyright (C) 2020 Acquia, Inc.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
 
