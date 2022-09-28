@@ -144,44 +144,47 @@ class Pa11yTestCommand extends TestsCommandBase
   {
     $pa11y_config = $this->testsWizard->getLocalPa11yConfig();
 
-    $pa11y_paths = $pa11y_config->get('paths');
-    if (is_string($pa11y_paths)) {
-      $pa11y_paths = [$pa11y_paths];
-    }
+    $config = [
+      'defaults' => [
+        'standard' => $pa11y_config->get('config.standard', 'WCAG2AA'),
+        'hideElements' => $pa11y_config->get('config.hideElements', ['svg']),
+        'ignore' => $pa11y_config->get('config.ignore', ['notice']),
+        'chromeLaunchConfig' => [
+          'ignoreHTTPSErrors' => TRUE,
+          'args' => [
+            '--no-sandbox',
+          ],
+        ],
+      ]
+    ];
 
     $base_url = $pa11y_config->get('base_url');
+    foreach ($pa11y_config->get('paths', ['/']) as $path) {
+      $config['urls'][] = $base_url . $path;
+    }
 
-    foreach ($pa11y_paths as $pa11y_path) {
-      $url = $base_url . $pa11y_path;
+    $config_file = sys_get_temp_dir() . '/pa11y-ci.js';
+    file_put_contents($config_file, 'module.exports = ' . json_encode($config, JSON_PRETTY_PRINT));
 
-      // Output errors.
-      $task = $this->taskExec($this->getConfigValue('repo.root') . '/node_modules/.bin/pa11y')
-        ->arg($url)
-        ->interactive($this->input()->isInteractive());
+    // Output errors.
+    $task = $this->taskExec($this->getConfigValue('repo.root') . '/node_modules/.bin/pa11y-ci')
+      ->option('config', $config_file)
+      ->interactive($this->input()->isInteractive());
 
-      $supported_configs = [
-        'standard',
-        'threshold',
-        'reporter',
-      ];
+    $threshold = $pa11y_config->get('config.threshold');
+    if ($threshold) {
+      $task->option('threshold', "$threshold");
+    }
+    $task->option('reporter', $pa11y_config->get('config.reporter', 'cli'));
 
-      foreach ($supported_configs as $config_key) {
-        $configuration = $pa11y_config->get("config.${config_key}", NULL);
-        print $configuration . PHP_EOL;
-        if (isset($configuration)) {
-          $task->option($config_key, "$configuration");
-        }
-      }
+    $result = $task->run();
 
-      $result = $task->run();
+    if ($result->getExitCode() == 1) {
+      throw new BltException("Pa11y tests execution failed, please check setup!");
+    }
 
-      if ($result->getExitCode() == 1) {
-        throw new BltException("Pa11y tests execution failed, please check setup!");
-      }
-
-      if ($result->getExitCode() == 2) {
-        throw new BltException("Pa11y tests failed!");
-      }
+    if ($result->getExitCode() == 2) {
+      throw new BltException("Pa11y tests failed!");
     }
   }
 
@@ -223,7 +226,7 @@ class Pa11yTestCommand extends TestsCommandBase
 
     $result = $this->taskExecStack()
       ->dir($repo_root)
-      ->exec('npm install pa11y --save-dev')
+      ->exec('npm install pa11y-ci --save-dev')
       ->printMetadata(FALSE)
       ->run();
 

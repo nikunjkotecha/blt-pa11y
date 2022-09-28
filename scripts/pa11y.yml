@@ -2,6 +2,10 @@ config:
   standard: WCAG2A
   reporter: tsv
   threshold: 0
+  hideElements:
+    - svg
+  ignore:
+    - notice
 paths:
   - /
   - /user/login
