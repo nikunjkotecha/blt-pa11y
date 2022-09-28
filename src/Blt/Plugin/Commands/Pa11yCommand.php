@@ -9,7 +9,8 @@ use Robo\Contract\VerbosityThresholdInterface;
 /**
  * Defines commands in the "recipes:pa11y:*" namespace.
  */
-class Pa11yCommand extends BltTasks {
+class Pa11yCommand extends BltTasks
+{
 
   /**
    * Generates example files for writing custom Pa11y tests.
@@ -18,8 +19,9 @@ class Pa11yCommand extends BltTasks {
    *
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
-  public function init() {
-    $source = $this->getConfigValue('blt.root') . '/../blt-pa11y/scripts';
+  public function init()
+  {
+    $source = __DIR__ . '/../../../../../blt-pa11y/scripts';
     $dest = $this->getConfigValue('repo.root') . '/tests/pa11y';
     $result = $this->taskCopyDir([$source => $dest])
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)

@@ -13,12 +13,14 @@ use Acquia\Blt\Robo\Wizards\Wizard;
  *
  * @package Acquia\Blt\Robo\Wizards
  */
-class TestsWizard extends Wizard {
+class TestsWizard extends Wizard
+{
 
   /**
    * Prompts user to generate valid Pa11y configuration file.
    */
-  public function wizardConfigurePa11y() {
+  public function wizardConfigurePa11y()
+  {
     $pa11y_local_config_file = $this->getConfigValue('repo.root') . '/tests/pa11y/local.yml';
     if (!file_exists($pa11y_local_config_file) || !$this->isPa11yConfigured()) {
       $this->logger->warning('Pa11y is not configured properly.');
@@ -44,7 +46,8 @@ class TestsWizard extends Wizard {
    * @return bool
    *   TRUE is Pa11y is properly configured on the local machine.
    */
-  public function isPa11yConfigured() {
+  public function isPa11yConfigured()
+  {
     // Verify that URIs required for Drupal and Pa11y are configured correctly.
     $local_pa11y_config = $this->getLocalPa11yConfig();
     if ($this->getConfigValue('project.local.uri') != $local_pa11y_config->get('base_url')) {
@@ -76,7 +79,8 @@ class TestsWizard extends Wizard {
    * @return \Acquia\Blt\Robo\Config\BltConfig
    *   The local Pa11y configuration.
    */
-  public function getLocalPa11yConfig() {
+  public function getLocalPa11yConfig()
+  {
     $pa11y_local_config_file = $this->getConfigValue('repo.root') . '/tests/pa11y/local.yml';
 
     $pa11y_local_config = new BltConfig();

@@ -1,6 +1,7 @@
 config:
-  threshold: 0
+  standard: WCAG2A
   reporter: tsv
+  threshold: 0
 paths:
   - /
   - /user/login
