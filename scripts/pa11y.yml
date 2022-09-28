@@ -1,0 +1,7 @@
+config:
+  threshold: 0
+  reporter: tsv
+paths:
+  - /
+  - /user/login
+  - /user/register

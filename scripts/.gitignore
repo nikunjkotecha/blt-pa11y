@@ -1,0 +1,7 @@
+composer.phar
+composer.lock
+bin
+vendor
+pa11y.local.yml
+*.rej
+test_releases
