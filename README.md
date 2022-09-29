@@ -34,7 +34,7 @@ In your project, require the plugin with Composer:
 composer require --dev nikunjkotecha/blt-pa11y
 ```
 
-## Initialize Config 
+## Initialize Config
 
 Run the recipe to initialize the necessary pa11y files / directories.
 
@@ -45,7 +45,16 @@ blt tests:pa11y:init
 
 ## Configuration
 
-Update the configuration to specify all the urls to test in 
+Update the configuration to specify all the urls to test. Make sure the site setup takes care of
+creating all required content.
+
+To disable Pa11y validation, please add following to your blt.yml
+```yaml
+pa11y:
+  validate: false
+```
+
+Example implementation can be found in the repo [github-actions-behat](https://github.com/nikunjkotecha/github-actions-behat/tree/docker)
 
 ## Run Tests
 
