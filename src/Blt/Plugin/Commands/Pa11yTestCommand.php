@@ -117,13 +117,13 @@ class Pa11yTestCommand extends TestsCommandBase
    */
   public function pa11y()
   {
-    if ($this->getConfigValue('pa11y.validate')) {
+    if ($this->getConfigValue('pa11y.validate', TRUE)) {
       $this->testsWizard = $this->getContainer()->get(TestsWizard::class);
       $this->testsWizard->wizardConfigurePa11y();
     }
 
     // Log config for debugging purposes.
-    $this->logConfig($this->getConfigValue('pa11y'), 'pa11y');
+    $this->logConfig($this->getConfigValue('pa11y', ['validate' => TRUE]), 'pa11y');
     $this->logConfig($this->testsWizard->getLocalPa11yConfig()->export());
     $this->createReportsDir();
 
@@ -155,7 +155,9 @@ class Pa11yTestCommand extends TestsCommandBase
           'args' => [
             '--no-sandbox',
             '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage'
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--headless',
           ],
         ],
       ]
