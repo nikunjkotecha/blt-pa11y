@@ -167,7 +167,7 @@ class Pa11yTestCommand extends TestsCommandBase
     }
 
     $config_file = sys_get_temp_dir() . '/pa11y-ci.json';
-    file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    file_put_contents($config_file, json_encode($config['defaults'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
     // Output errors.
     foreach ($config['urls'] as $url) {
