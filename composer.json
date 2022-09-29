@@ -1,31 +1,31 @@
 {
-  "name": "nikunjkotecha/blt-pa11y",
-  "description": "Pa11y integration for Acquia BLT",
-  "license": "GPL-2.0+",
-  "authors":[
-    {
-      "name": "Nikunj Kotecha",
-      "homepage": "https://www.nikunj.dev",
-      "role": "Maintainer"
+    "name": "nikunjkotecha/blt-pa11y",
+    "description": "Pa11y integration for Acquia BLT",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Nikunj Kotecha",
+            "homepage": "https://www.nikunj.dev",
+            "role": "Maintainer"
+        }
+    ],
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    },
+    "require": {
+        "acquia/blt": "^13.2"
+    },
+    "conflict": {
+        "acquia/blt": "<=12.5.1"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Acquia\\BltPa11y\\": "./src/"
+        }
     }
-  ],
-  "repositories": {
-    "drupal": {
-      "type": "composer",
-      "url": "https://packages.drupal.org/8"
-    }
-  },
-  "require": {
-    "acquia/blt": "^13.2"
-  },
-  "conflict": {
-    "acquia/blt": "<=12.5.1"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "autoload": {
-    "psr-4": {
-      "Acquia\\BltPa11y\\": "./src/"
-    }
-  }
 }

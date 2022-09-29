@@ -6,8 +6,8 @@ use Acquia\Blt\Robo\Commands\Tests\TestsCommandBase;
 use Acquia\Blt\Robo\Exceptions\BltException;
 use Acquia\BltPa11y\Blt\Wizards\TestsWizard;
 use Robo\Contract\VerbosityThresholdInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use League\Container\Definition\DefinitionInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Defines commands in the "tests" namespace.
@@ -52,7 +52,7 @@ class Pa11yTestCommand extends TestsCommandBase
   public function setupPa11y()
   {
     if (!$this->isPa11yConfigured()) {
-      $confirm = $this->confirm("Pa11y configuration is not fully initialized. Run recipes:pa11y:init now? ", TRUE);
+      $confirm = $this->confirm('Pa11y configuration is not fully initialized. Run recipes:pa11y:init now?', TRUE);
       if ($confirm) {
         $this->invokeCommands(['recipes:pa11y:init']);
       } else {
@@ -78,7 +78,7 @@ class Pa11yTestCommand extends TestsCommandBase
     }
 
     if ($copy_map) {
-      $this->say("Generating Pa11y configuration files...");
+      $this->say('Generating Pa11y configuration files...');
       foreach ($copy_map as $from => $to) {
         $task->copy($from, $to);
       }
@@ -110,11 +110,7 @@ class Pa11yTestCommand extends TestsCommandBase
    * @aliases tests:pa11y
    *
    * @interactGenerateSettingsFiles
-   * @interactInstallDrupal
-   * @validateDrupalIsInstalled
-   * @validateVmConfig
    * @launchWebServer
-   * @executeInVm
    *
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    * @throws \Exception
@@ -146,6 +142,11 @@ class Pa11yTestCommand extends TestsCommandBase
 
     $config = [
       'defaults' => [
+        'timeout' => $pa11y_config->get('config.timeout', 5000),
+        'viewport' => [
+          'width' => $pa11y_config->get('config.viewport.width', 320),
+          'height' => $pa11y_config->get('config.viewport.height', 480),
+        ],
         'standard' => $pa11y_config->get('config.standard', 'WCAG2AA'),
         'hideElements' => $pa11y_config->get('config.hideElements', ['svg']),
         'ignore' => $pa11y_config->get('config.ignore', ['notice']),
@@ -153,6 +154,8 @@ class Pa11yTestCommand extends TestsCommandBase
           'ignoreHTTPSErrors' => TRUE,
           'args' => [
             '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
           ],
         ],
       ]
@@ -163,29 +166,40 @@ class Pa11yTestCommand extends TestsCommandBase
       $config['urls'][] = $base_url . $path;
     }
 
-    $config_file = sys_get_temp_dir() . '/pa11y-ci.js';
-    file_put_contents($config_file, 'module.exports = ' . json_encode($config, JSON_PRETTY_PRINT));
+    $config_file = sys_get_temp_dir() . '/pa11y-ci.json';
+    file_put_contents($config_file, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
     // Output errors.
-    $task = $this->taskExec($this->getConfigValue('repo.root') . '/node_modules/.bin/pa11y-ci')
-      ->option('config', $config_file)
-      ->interactive($this->input()->isInteractive());
+    foreach ($config['urls'] as $url) {
+      $task = $this->taskExec($this->getConfigValue('repo.root') . '/node_modules/.bin/pa11y')
+        ->arg($url)
+        ->option('config', $config_file)
+        ->interactive($this->input()->isInteractive());
 
-    $threshold = $pa11y_config->get('config.threshold');
-    if ($threshold) {
-      $task->option('threshold', "$threshold");
+      $threshold = $pa11y_config->get('config.threshold');
+      if ($threshold) {
+        // We want value to be passed all the time, even for 0 so using string.
+        $task->option('threshold', "$threshold");
+      }
+
+      $result = $task->run();
+
+      // For success, we expect the exit code to be 0.
+      if ($result->getExitCode()) {
+        unlink($config_file);
+        $this->logConfig($config, 'pa11y-ci', OutputInterface::VERBOSITY_QUIET);
+
+        if ($result->getExitCode() == 1) {
+          throw new BltException('Pa11y tests execution failed, please check setup!');
+        }
+
+        if ($result->getExitCode() == 2) {
+          throw new BltException('Pa11y tests failed!');
+        }
+      }
     }
-    $task->option('reporter', $pa11y_config->get('config.reporter', 'cli'));
 
-    $result = $task->run();
-
-    if ($result->getExitCode() == 1) {
-      throw new BltException("Pa11y tests execution failed, please check setup!");
-    }
-
-    if ($result->getExitCode() == 2) {
-      throw new BltException("Pa11y tests failed!");
-    }
+    unlink($config_file);
   }
 
   /**
@@ -226,7 +240,7 @@ class Pa11yTestCommand extends TestsCommandBase
 
     $result = $this->taskExecStack()
       ->dir($repo_root)
-      ->exec('npm install pa11y-ci --save-dev')
+      ->exec('npm install pa11y --save-dev')
       ->printMetadata(FALSE)
       ->run();
 
