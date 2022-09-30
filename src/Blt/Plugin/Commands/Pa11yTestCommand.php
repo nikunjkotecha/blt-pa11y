@@ -143,6 +143,7 @@ class Pa11yTestCommand extends TestsCommandBase
     $config = [
       'defaults' => [
         'timeout' => $pa11y_config->get('config.timeout', 5000),
+        'reporter' => $pa11y_config->get('config.reporter', 'cli'),
         'viewport' => [
           'width' => $pa11y_config->get('config.viewport.width', 320),
           'height' => $pa11y_config->get('config.viewport.height', 480),
