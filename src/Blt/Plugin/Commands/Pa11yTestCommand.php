@@ -185,6 +185,10 @@ class Pa11yTestCommand extends TestsCommandBase
         $task->option('threshold', "$threshold");
       }
 
+      if ($pa11y_config->get('screenCapture')) {
+        $task->option('screen-capture', 'tests/pa11y/' . urlencode($url) . '.png');
+      }
+      
       $result = $task->run();
 
       // For success, we expect the exit code to be 0.
