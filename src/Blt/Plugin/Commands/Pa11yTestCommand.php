@@ -152,6 +152,7 @@ class Pa11yTestCommand extends TestsCommandBase
         'hideElements' => $pa11y_config->get('config.hideElements', ['svg']),
         'ignore' => $pa11y_config->get('config.ignore', ['notice']),
         'chromeLaunchConfig' => [
+          'executablePath' => $pa11y_config->get('config.executablePath', '/usr/bin/chromium-browser'),
           'ignoreHTTPSErrors' => TRUE,
           'args' => [
             '--no-sandbox',
