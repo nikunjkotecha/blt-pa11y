@@ -48,6 +48,11 @@ blt tests:pa11y:init
 Update the configuration to specify all the urls to test. Make sure the site setup takes care of
 creating all required content.
 
+Configurations file `tests/pa11y/pa11y.yml` in your repo.
+
+To understand different possible values for configuration, please visit https://github.com/pa11y/pa11y
+
+
 To disable Pa11y validation, please add following to your blt.yml
 ```yaml
 pa11y:
