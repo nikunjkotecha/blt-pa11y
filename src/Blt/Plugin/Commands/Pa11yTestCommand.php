@@ -189,7 +189,7 @@ class Pa11yTestCommand extends TestsCommandBase
       if ($pa11y_config->get('screenCapture')) {
         $task->option('screen-capture', 'tests/pa11y/' . urlencode($url) . '.png');
       }
-      
+
       $result = $task->run();
 
       // For success, we expect the exit code to be 0.
@@ -240,7 +240,7 @@ class Pa11yTestCommand extends TestsCommandBase
    */
   public function setupPa11yExecutable()
   {
-    if (!$this->getConfigValue('pa11y')) {
+    if (!$this->getConfigValue('pa11y.validate', TRUE)) {
       return;
     }
 
